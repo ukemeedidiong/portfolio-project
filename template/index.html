@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Welcome, {{ user_name }}</h1>
+    <h2>Budget: ${{ budget }}</h2>
+    <h2>Total Expenses: ${{ total_expense }}</h2>
+
+    <h1>Expense Tracker</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flashes">
+        {% for category, message in messages %}
+          <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <div id="records">
+        <h2>Expense Records</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Serial no</th>
+                    <th>Item Name</th>
+                    <th>Item Price</th>
+                    <th>Purchase Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                <tr class="record-row" data-rowid="{{ record[0] }}">
+                    <td>{{ record[0] }}</td>
+                    <td>{{ record[1] }}</td>
+                    <td>{{ record[2] }}</td>
+                    <td>{{ record[3] }}</td>
+                    <td>
+                        <button class="update-btn" data-rowid="{{ record[0] }}">Update</button>
+                        <button class="delete-btn" data-rowid="{{ record[0] }}">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div id="form-container">
+        <h2>Add/Update Record</h2>
+        <form id="record-form" method="POST" action="{{ url_for('expense_management.save_record') }}">
+            <label for="item_name">Item Name:</label>
+            <input type="text" id="item_name" name="item_name" required><br><br>
+            <label for="item_amt">Item Price:</label>
+            <input type="number" step="0.01" id="item_amt" name="item_price" required><br><br>
+            <label for="transaction_date">Purchase Date:</label>
+            <input type="date" id="transaction_date" name="purchase_date" required><br><br>
+            <button type="button" id="cur-date">Current Date</button>
+            <input type="hidden" id="selected_rowid" name="rowid">
+            <br><br>
+            <button type="submit" id="submit-btn">Save Record</button>
+        </form>
+    </div>
+
+    <div id="budget-control">
+        <h2>Budget Control</h2>
+        <form id="budget-form" method="POST" action="{{ url_for('budget_management.set_budget') }}">
+            <label for="budget_amt">Set Budget:</label>
+            <input type="number" id="budget_amt" name="budget" required><br><br>
+            <button type="submit" id="budget-btn">Set Budget</button>
+        </form>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
